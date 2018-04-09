@@ -2,21 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using Server.Models;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using Server.Models;
 
 namespace Server.DAL
 {
-    public class OrderContext : DbContext
+    public class TicketContext : DbContext 
     {
-        public OrderContext() : base("OrderContext") { }
+        public TicketContext() : base("TicketContext") { }
 
+        public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Item> Items { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         }
+
+
     }
 }

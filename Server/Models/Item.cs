@@ -5,14 +5,12 @@ using System.Web;
 
 namespace Server.Models
 {
-    public class Order
+    public class Item
     {
-        public int OrderID { get; set; }
-        public string Waiter { get; set; }
-        public string Status { get; set; }
-
+        public int ItemID { get; set; }
+        public string Title { get; set; }
+        
         public Nullable<int> TicketID { get; set; }
         public virtual Ticket Ticket { get; set; }
-
     }
 }

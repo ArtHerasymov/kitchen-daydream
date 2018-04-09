@@ -11,108 +11,109 @@ using Server.Models;
 
 namespace Server.Controllers
 {
-    public class OrdersController : Controller
+    public class TicketsController : Controller
     {
-        private OrderContext db = new OrderContext();
+        private UnitOfWork unitOfWork = new UnitOfWork();
 
-        // GET: Orders
+        // GET: Tickets
         public ActionResult Index()
         {
-            return View(db.Orders.ToList());
+            var tickets = unitOfWork.TicketRepository.Get();
+            return View(tickets.ToList());
         }
 
-        // GET: Orders/Details/5
-        public ActionResult Details(string id)
+        // GET: Tickets/Details/5
+        public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
-            if (order == null)
+            Ticket ticket = unitOfWork.TicketRepository.GetByID(id);
+            if (ticket == null)
             {
                 return HttpNotFound();
             }
-            return View(order);
+            return View(ticket);
         }
 
-        // GET: Orders/Create
+        // GET: Tickets/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Orders/Create
+        // POST: Tickets/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Waiter,Payment")] Order order)
+        public ActionResult Create([Bind(Include = "TicketID,Status")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
-                db.Orders.Add(order);
-                db.SaveChanges();
+                unitOfWork.TicketRepository.Insert(ticket);
+                unitOfWork.Save();
                 return RedirectToAction("Index");
             }
 
-            return View(order);
+            return View(ticket);
         }
 
-        // GET: Orders/Edit/5
-        public ActionResult Edit(string id)
+        // GET: Tickets/Edit/5
+        public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
-            if (order == null)
+            Ticket ticket = unitOfWork.TicketRepository.GetByID(id);
+            if (ticket == null)
             {
                 return HttpNotFound();
             }
-            return View(order);
+            return View(ticket);
         }
 
-        // POST: Orders/Edit/5
+        // POST: Tickets/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Waiter,Payment")] Order order)
+        public ActionResult Edit([Bind(Include = "TicketID,Status")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(order).State = EntityState.Modified;
-                db.SaveChanges();
+                unitOfWork.TicketRepository.Update(ticket);
+                unitOfWork.Save();
                 return RedirectToAction("Index");
             }
-            return View(order);
+            return View(ticket);
         }
 
-        // GET: Orders/Delete/5
-        public ActionResult Delete(string id)
+        // GET: Tickets/Delete/5
+        public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
-            if (order == null)
+            Ticket ticket = unitOfWork.TicketRepository.GetByID(id);
+            if (ticket == null)
             {
                 return HttpNotFound();
             }
-            return View(order);
+            return View(ticket);
         }
 
-        // POST: Orders/Delete/5
+        // POST: Tickets/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(int id)
         {
-            Order order = db.Orders.Find(id);
-            db.Orders.Remove(order);
-            db.SaveChanges();
+            Ticket ticket = unitOfWork.TicketRepository.GetByID(id);
+            unitOfWork.TicketRepository.Delete(id);
+            unitOfWork.Save();
             return RedirectToAction("Index");
         }
 
@@ -120,7 +121,7 @@ namespace Server.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                unitOfWork.Dispose();
             }
             base.Dispose(disposing);
         }
