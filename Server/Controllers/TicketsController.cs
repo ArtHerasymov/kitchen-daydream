@@ -19,7 +19,8 @@ namespace Server.Controllers
         public ActionResult Index()
         {
             var tickets = unitOfWork.TicketRepository.Get();
-            return View(tickets.ToList());
+            return Json(tickets, JsonRequestBehavior.AllowGet);
+            //return View(tickets.ToList());
         }
 
         // GET: Tickets/Details/5
