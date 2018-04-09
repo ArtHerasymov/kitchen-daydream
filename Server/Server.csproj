@@ -183,10 +183,14 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="BL\CookingFactory.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\TicketsController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="DAL\GenericRepository.cs" />
+    <Compile Include="DAL\OrderContext.cs" />
+    <Compile Include="DAL\OrderInitializer.cs" />
     <Compile Include="DAL\TicketContext.cs" />
     <Compile Include="DAL\TicketInitializer.cs" />
     <Compile Include="DAL\UnitOfWork.cs" />
@@ -256,6 +260,11 @@
     <Content Include="Views\Tickets\Details.cshtml" />
     <Content Include="Views\Tickets\Edit.cshtml" />
     <Content Include="Views\Tickets\Index.cshtml" />
+    <Content Include="Views\Orders\Create.cshtml" />
+    <Content Include="Views\Orders\Delete.cshtml" />
+    <Content Include="Views\Orders\Details.cshtml" />
+    <Content Include="Views\Orders\Edit.cshtml" />
+    <Content Include="Views\Orders\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
