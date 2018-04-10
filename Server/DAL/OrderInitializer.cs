@@ -10,36 +10,39 @@ namespace Server.DAL
     {
         protected override void Seed(OrderContext context)
         {
-            var orders = new List<Order>
-            {
-                new Order{Waiter = "John" , Status = "READY", TicketID=1},
-                new Order{Waiter = "Tina" , Status = "IN_PROGRESS", TicketID=2}
-            };
+             var orders = new List<Order>
+             {
+                 new Order{Waiter = "John" , Status = "READY" },
+                 new Order{Waiter = "Tina" , Status = "IN_PROGRESS"}
+             };
 
-            var items = new List<Item>
-            {
-                new Item{Title = "Soup", TicketID =1},
-                new Item{Title = "Steak", TicketID =2}
-            };
+             var items = new List<Item>
+             {
+                 new Item{Title = "Chineese Soup"},
+                 new Item{Title = "Chineese Appetizer"},
+                 new Item{Title = "Chineese Dessert" },
 
-            var tickets = new List<Ticket>
-            {
-                new Ticket{Status = "READY",Orders = orders, Items = items},
-                new Ticket{Status = "CANCELLED", Orders = orders, Items = items}
-            };
+                 new Item{Title ="Italian Soup"},
+                 new Item{Title="Italian Appetizer" },
+                 new Item{Title="Italian Dessert"}
+             };
+             var tickets = new List<Ticket>
+             {
+                 new Ticket{Status = "READY"},
+                 new Ticket{Status = "CANCELLED"}
+             };
 
-            tickets.ForEach(s => context.Tickets.Add(s));
-            context.SaveChanges();
+            foreach (Ticket s in tickets)
+                context.Tickets.Add(s);
+             context.SaveChanges();
+
+             orders.ForEach(s => context.Orders.Add(s));
+             context.SaveChanges();
 
 
-
-            orders.ForEach(s => context.Orders.Add(s));
-            context.SaveChanges();
-
-
-            items.ForEach(s => context.Items.Add(s));
-            context.SaveChanges();
-
+             items.ForEach(s => context.Items.Add(s));
+             context.SaveChanges();
+  
         }
     }
 }

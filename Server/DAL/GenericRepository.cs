@@ -10,10 +10,10 @@ namespace Server.DAL
 {
     public class GenericRepository<TEntity> where TEntity : class
     {
-        internal TicketContext context;
+        internal OrderContext context;
         internal DbSet<TEntity> dbSet;
 
-        public GenericRepository(TicketContext context)
+        public GenericRepository(OrderContext context)
         {
             this.context = context;
             this.dbSet = context.Set<TEntity>();

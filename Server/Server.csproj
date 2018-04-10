@@ -191,8 +191,6 @@
     <Compile Include="DAL\GenericRepository.cs" />
     <Compile Include="DAL\OrderContext.cs" />
     <Compile Include="DAL\OrderInitializer.cs" />
-    <Compile Include="DAL\TicketContext.cs" />
-    <Compile Include="DAL\TicketInitializer.cs" />
     <Compile Include="DAL\UnitOfWork.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

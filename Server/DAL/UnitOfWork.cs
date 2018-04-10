@@ -6,7 +6,7 @@ namespace Server.DAL
 {
     public class UnitOfWork : IDisposable
     {
-        private TicketContext context = new TicketContext();
+        private OrderContext context = new OrderContext();
         private GenericRepository<Ticket> ticketRepository;
         private GenericRepository<Order> orderRepository;
         private GenericRepository<Item> itemRepository;

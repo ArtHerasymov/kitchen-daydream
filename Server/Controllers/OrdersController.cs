@@ -20,8 +20,8 @@ namespace Server.Controllers
         public ActionResult Index()
         {
             var orders = unitOfWork.OrderRepository.Get();
-            return Json(orders, JsonRequestBehavior.AllowGet);
-           // return View(orders.ToList());
+            //return Json(orders, JsonRequestBehavior.AllowGet);
+            return View(orders.ToList());
         }
 
         // GET: Orders/Details/5
@@ -50,17 +50,14 @@ namespace Server.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "OrderID,Waiter,Status,TicketID")] Order order)
         {
             if (ModelState.IsValid)
             {
-                db.Orders.Add(order);
-                db.SaveChanges();
+                unitOfWork.OrderRepository.Insert(order);
+                unitOfWork.Save();
                 return RedirectToAction("Index");
             }
-
-            ViewBag.TicketID = new SelectList(db.Tickets, "TicketID", "Status", order.TicketID);
             return View(order);
         }
 
