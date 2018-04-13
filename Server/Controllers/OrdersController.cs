@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Server.DAL;
 using Server.Models;
+using Server.BL;
 
 namespace Server.Controllers
 {
@@ -20,8 +21,8 @@ namespace Server.Controllers
         public ActionResult Index()
         {
             var orders = unitOfWork.OrderRepository.Get();
-            //return Json(orders, JsonRequestBehavior.AllowGet);
-            return View(orders.ToList());
+            return Json(orders, JsonRequestBehavior.AllowGet);
+           // return View(orders.ToList());
         }
 
         // GET: Orders/Details/5
@@ -50,11 +51,19 @@ namespace Server.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public ActionResult Create([Bind(Include = "OrderID,Waiter,Status,TicketID")] Order order)
+        public ActionResult Create([Bind(Include = "Waiter, Items, Type")] Order order)
         {
+            order.Status = "IN_PROGRESS";
+
             if (ModelState.IsValid)
             {
                 unitOfWork.OrderRepository.Insert(order);
+
+                string[] items = order.Items.Split(',');
+           
+                foreach (String Item in items)
+                    order.ItemObjects.Add(new Models.Item();
+
                 unitOfWork.Save();
                 return RedirectToAction("Index");
             }
@@ -73,7 +82,7 @@ namespace Server.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.TicketID = new SelectList(db.Tickets, "TicketID", "Status", order.TicketID);
+            ViewBag.TicketID = new SelectList(db.Tickets, "TicketID", "Status");
             return View(order);
         }
 
@@ -90,7 +99,7 @@ namespace Server.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.TicketID = new SelectList(db.Tickets, "TicketID", "Status", order.TicketID);
+            ViewBag.TicketID = new SelectList(db.Tickets, "TicketID", "Status");
             return View(order);
         }
 

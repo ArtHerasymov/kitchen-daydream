@@ -10,12 +10,10 @@ namespace Server.Models
         public int OrderID { get; set; }
         public string Waiter { get; set; }
         public string Status { get; set; }
+        public string Items { get; set; }
 
-        public Nullable<int> TicketID { get; set; }
-        public virtual Ticket Ticket { get; set; }
-
-        public virtual ICollection<Item> Items { get; set; }
-        
+        public ICollection<Item> ItemObjects { get; set; }
+         
 
     }
 }
