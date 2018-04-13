@@ -51,19 +51,23 @@ namespace Server.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public ActionResult Create([Bind(Include = "Waiter, Items, Type")] Order order)
+        public ActionResult Create([Bind(Include = "Waiter, Items, InitialPrice")] Order order)
         {
             order.Status = "IN_PROGRESS";
 
             if (ModelState.IsValid)
             {
+
+                Dispatcher dispatcher = new Dispatcher();
+                ITicketBuilder builder;
+                builder = new ChineeseBuilder(order);
+                dispatcher.SetOrder(order);
+
+                Ticket ticket = dispatcher.BuiildTicket(builder);
                 unitOfWork.OrderRepository.Insert(order);
-
-                string[] items = order.Items.Split(',');
-           
-                foreach (String Item in items)
-                    order.ItemObjects.Add(new Models.Item();
-
+                unitOfWork.TicketRepository.Insert(ticket);
+                foreach (Item i in ticket.Items)
+                    unitOfWork.ItemRepository.Insert(i);
                 unitOfWork.Save();
                 return RedirectToAction("Index");
             }

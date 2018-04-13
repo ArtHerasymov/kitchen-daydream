@@ -5,7 +5,6 @@ using System.Web;
 
 namespace Server.BL
 {
-
     static class TaxReference
     {
         public const double ChinaSanctionFee = 0.1;

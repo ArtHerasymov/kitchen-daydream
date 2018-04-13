@@ -11,6 +11,7 @@ namespace Server.Models
         public string Waiter { get; set; }
         public string Status { get; set; }
         public string Items { get; set; }
+        public double InitialPrice { get; set; }
 
         public ICollection<Item> ItemObjects { get; set; }
          
