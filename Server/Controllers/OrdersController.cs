@@ -37,7 +37,7 @@ namespace Server.Controllers
             {
                 return HttpNotFound();
             }
-            return View(order);
+            return Json(order, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Orders/Create
@@ -59,7 +59,6 @@ namespace Server.Controllers
             discount.Status = "Regular";
 
             order.Discount = discount;
-            
 
             if (ModelState.IsValid)
             {
@@ -68,6 +67,7 @@ namespace Server.Controllers
 
                 Ticket ticket = dispatcher.BuildTicket(builder);
 
+                //Saving changes to db
                 unitOfWork.OrderRepository.Insert(order);
                 unitOfWork.TicketRepository.Insert(ticket);
                 unitOfWork.DiscountRepository.Insert(discount);

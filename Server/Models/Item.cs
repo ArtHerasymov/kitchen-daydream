@@ -12,6 +12,7 @@ namespace Server.Models
         public string Title { get; set; }
         public string TicketID { get; set; }
         public virtual Ticket Ticket { get; set; }
+        public Boolean Status { get; set; }
 
         public Nullable<int> OrderID { get; set; }
         public virtual Order Order { get; set; }

@@ -54,9 +54,18 @@ namespace Server.BL
     public abstract class DessertCourse { }
     public abstract class AppetizerCourse { }
 
-    public class ChineeseMainCourse : MainCourse { }
-    public class ChineeseDessertCourse: DessertCourse { }
-    public class ChineeseAppetizerCourse : AppetizerCourse { }
+    public class ChineeseMainCourse : MainCourse
+    {
+
+    }
+    public class ChineeseDessertCourse: DessertCourse
+    {
+
+    }
+    public class ChineeseAppetizerCourse : AppetizerCourse
+    {
+
+    }
 
     public class ItalianMainCourse : MainCourse { }
     public class ItalianDessertCourse : DessertCourse { }

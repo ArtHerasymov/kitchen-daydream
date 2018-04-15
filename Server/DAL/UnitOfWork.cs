@@ -23,7 +23,6 @@ namespace Server.DAL
                 return itemRepository;
             }
         }
-
         public GenericRepository<Ticket> TicketRepository
         {
             get
@@ -36,7 +35,6 @@ namespace Server.DAL
                 return ticketRepository;
             }
         }
-
         public GenericRepository<Order> OrderRepository
         {
             get
