@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Server.Models;
+using Server.DAL;
 
 namespace Server.BL
 {
@@ -50,8 +51,16 @@ namespace Server.BL
         public void CalculateFinalPrice()
         {
             Accounting accounting = new Accounting();
+            UnitOfWork unit = new UnitOfWork();
+            Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
+            double discountAmount;
+            if (discount == null)
+                discountAmount = 0;
+            else
+                discountAmount = discount.DetermineDiscountAmount();
+
             accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - order.Discount.DetermineDiscountAmount() *order.InitialPrice;
+            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discountAmount * order.InitialPrice;
         }
 
         public void GenerateTicketId()
@@ -123,8 +132,15 @@ namespace Server.BL
         public void CalculateFinalPrice()
         {
             Accounting accounting = new Accounting();
+            UnitOfWork unit = new UnitOfWork();
+            Discount discount = (Discount)unit.DiscountRepository.Get(o => o.DiscountID == order.DiscountID);
+            double discountAmount;
+            if (discount == null)
+                discountAmount = 0;
+            else
+                discountAmount = discount.DetermineDiscountAmount();
             accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - order.Discount.DetermineDiscountAmount() * order.InitialPrice;
+            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discountAmount * order.InitialPrice;
         }
 
         public void DecodeTitles()
@@ -197,8 +213,15 @@ namespace Server.BL
         public void CalculateFinalPrice()
         {
             Accounting accounting = new Accounting();
+            UnitOfWork unit = new UnitOfWork();
+            Discount discount = (Discount)unit.DiscountRepository.Get(o => o.DiscountID == order.DiscountID);
+            double discountAmount;
+            if (discount == null)
+                discountAmount = 0;
+            else
+                discountAmount = discount.DetermineDiscountAmount();
             accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - order.Discount.DetermineDiscountAmount() * order.InitialPrice;
+            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discountAmount * order.InitialPrice;
         }
 
         public void DecodeTitles()

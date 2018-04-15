@@ -7,7 +7,6 @@ namespace Server.Models
 {
     public class Item
     {
-
         public int ItemID { get; set; }
         public string Title { get; set; }
         public string TicketID { get; set; }

@@ -54,11 +54,9 @@ namespace Server.Controllers
         public ActionResult Create([Bind(Include = "Waiter, Items, InitialPrice, DiscountID")] Order order)
         {
             order.Status = "IN_PROGRESS";
-            Discount discount = new Discount();
-            discount.DiscountID = order.DiscountID;
-            discount.Status = "Regular";
-
-            order.Discount = discount;
+            DiscountProxy proxy = new DiscountProxy();
+            Discount discount = proxy.AccessObject(unitOfWork, order.DiscountID);
+            order.DiscountID = discount.DiscountID;
 
             if (ModelState.IsValid)
             {
@@ -68,9 +66,10 @@ namespace Server.Controllers
                 Ticket ticket = dispatcher.BuildTicket(builder);
 
                 //Saving changes to db
+             //   proxy.SaveDiscount();
                 unitOfWork.OrderRepository.Insert(order);
                 unitOfWork.TicketRepository.Insert(ticket);
-                unitOfWork.DiscountRepository.Insert(discount);
+             
                 foreach (Item i in ticket.Items)
                     unitOfWork.ItemRepository.Insert(i);
                 unitOfWork.Save();
