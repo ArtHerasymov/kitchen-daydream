@@ -51,21 +51,26 @@ namespace Server.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public ActionResult Create([Bind(Include = "Waiter, Items, InitialPrice")] Order order)
+        public ActionResult Create([Bind(Include = "Waiter, Items, InitialPrice, DiscountID")] Order order)
         {
             order.Status = "IN_PROGRESS";
+            Discount discount = new Discount();
+            discount.DiscountID = order.DiscountID;
+            discount.Status = "Regular";
+
+            order.Discount = discount;
+            
 
             if (ModelState.IsValid)
             {
-
                 Dispatcher dispatcher = new Dispatcher();
-                ITicketBuilder builder;
-                builder = new ChineeseBuilder(order);
-                dispatcher.SetOrder(order);
+                ITicketBuilder builder = new ChineeseBuilder(order);
 
-                Ticket ticket = dispatcher.BuiildTicket(builder);
+                Ticket ticket = dispatcher.BuildTicket(builder);
+
                 unitOfWork.OrderRepository.Insert(order);
                 unitOfWork.TicketRepository.Insert(ticket);
+                unitOfWork.DiscountRepository.Insert(discount);
                 foreach (Item i in ticket.Items)
                     unitOfWork.ItemRepository.Insert(i);
                 unitOfWork.Save();
@@ -73,7 +78,7 @@ namespace Server.Controllers
             }
             return View(order);
         }
-
+    
         // GET: Orders/Edit/5
         public ActionResult Edit(int? id)
         {

@@ -20,6 +20,7 @@ namespace Server.Models
         public string Status { get; set; }
         public string Chief { get; set; }
         public string Suchief { get; set; }
+        public double FinalPrice { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Item> Items { get; set; }
     }

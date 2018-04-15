@@ -196,8 +196,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\Order.cs" />
+    <Compile Include="BL\State.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

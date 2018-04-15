@@ -18,6 +18,7 @@ namespace Server.DAL
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
 
 
     }

@@ -10,7 +10,7 @@ namespace Server.BL
     {
         void SetTicketType();
         void AssignChiefs();
-        void CalculateFinalPrice(double clientSidePrice);
+        void CalculateFinalPrice();
         void CalculateDeadline();
         void DecodeTitles();
         void GenerateTicketId();
@@ -23,8 +23,6 @@ namespace Server.BL
         String[] items;
         List<Item> itemObjects = new List<Item>();
         Ticket ticket = new Ticket();
-        double finalPrice;
-        string type;
         Order order;
 
         public ChineeseBuilder(Order order)
@@ -49,11 +47,11 @@ namespace Server.BL
             ticket.Deadline = DateTime.Now.AddHours(1).ToString();
         }
 
-        public void CalculateFinalPrice(double clientSidePrice)
+        public void CalculateFinalPrice()
         {
             Accounting accounting = new Accounting();
             accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-            this.finalPrice = accounting.GetSalesTax(clientSidePrice, this.ticket.TicketType);
+            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - order.Discount.DetermineDiscountAmount() *order.InitialPrice;
         }
 
         public void GenerateTicketId()
@@ -84,7 +82,6 @@ namespace Server.BL
             }
             ticket.Items = itemObjects;
         }
-
 
         public Ticket GetTicket()
         {
@@ -123,11 +120,11 @@ namespace Server.BL
             ticket.Deadline = DateTime.Now.AddHours(0.5).ToString();
         }
 
-        public void CalculateFinalPrice(double clientSidePrice)
+        public void CalculateFinalPrice()
         {
             Accounting accounting = new Accounting();
             accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-            this.finalPrice = accounting.GetSalesTax(clientSidePrice, this.ticket.TicketType);
+            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - order.Discount.DetermineDiscountAmount() * order.InitialPrice;
         }
 
         public void DecodeTitles()
@@ -197,11 +194,11 @@ namespace Server.BL
             ticket.Deadline = DateTime.Now.AddHours(1.5).ToString();
         }
 
-        public void CalculateFinalPrice(double clientSidePrice)
+        public void CalculateFinalPrice()
         {
             Accounting accounting = new Accounting();
             accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-            this.finalPrice = accounting.GetSalesTax(clientSidePrice, this.ticket.TicketType);
+            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - order.Discount.DetermineDiscountAmount() * order.InitialPrice;
         }
 
         public void DecodeTitles()
@@ -251,24 +248,17 @@ namespace Server.BL
         {
             return this.ticket;
         }
-
     }
 
 
     public class Dispatcher
     {
-        Order order;
 
-        public void SetOrder(Order order)
-        {
-            this.order = order;
-        }
-
-        public Ticket BuiildTicket(ITicketBuilder _builder)
+        public Ticket BuildTicket(ITicketBuilder _builder)
         {
             _builder.SetTicketType();
             _builder.AssignChiefs();
-            _builder.CalculateFinalPrice(order.InitialPrice);
+            _builder.CalculateFinalPrice();
             _builder.CalculateDeadline();
             _builder.GenerateTicketId();
             _builder.DecodeTitles();

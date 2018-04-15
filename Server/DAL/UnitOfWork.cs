@@ -10,6 +10,7 @@ namespace Server.DAL
         private GenericRepository<Ticket> ticketRepository;
         private GenericRepository<Order> orderRepository;
         private GenericRepository<Item> itemRepository;
+        private GenericRepository<Discount> discountRepository;
 
         public GenericRepository<Item> ItemRepository
         {
@@ -46,6 +47,18 @@ namespace Server.DAL
                     this.orderRepository = new GenericRepository<Order>(context);
                 }
                 return orderRepository;
+            }
+        }
+        public GenericRepository<Discount> DiscountRepository
+        {
+            get
+            {
+
+                if (this.discountRepository == null)
+                {
+                    this.discountRepository = new GenericRepository<Discount>(context);
+                }
+                return discountRepository;
             }
         }
 
