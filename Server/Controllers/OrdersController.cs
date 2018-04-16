@@ -37,7 +37,19 @@ namespace Server.Controllers
             {
                 return HttpNotFound();
             }
-            return Json(order, JsonRequestBehavior.AllowGet);
+            String[] itemIds = order.Items.Split(',');
+            List<Item>items = (List<Item>)unitOfWork.ItemRepository.Get(o => o.OrderID == order.OrderID);
+
+            foreach(Item item in items)
+            {
+                if (item == null)
+                    return Json("false", JsonRequestBehavior.AllowGet);
+                if(item.Status != "READY")
+                    return Json("false", JsonRequestBehavior.AllowGet);
+
+            }
+            return Json("true" , JsonRequestBehavior.AllowGet);
+            //return Json(order, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Orders/Create

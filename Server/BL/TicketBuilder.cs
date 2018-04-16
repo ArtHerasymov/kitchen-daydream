@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Server.Models;
 using Server.DAL;
+using System.Threading.Tasks;
 
 namespace Server.BL
 {
@@ -15,6 +16,7 @@ namespace Server.BL
         void CalculateDeadline();
         void DecodeTitles();
         void GenerateTicketId();
+        Task InitiateCookingAsync();
     
         Ticket GetTicket();
     }
@@ -25,6 +27,7 @@ namespace Server.BL
         List<Item> itemObjects = new List<Item>();
         Ticket ticket = new Ticket();
         Order order;
+        UnitOfWork unit = new UnitOfWork();
 
         public ChineeseBuilder(Order order)
         {
@@ -79,27 +82,73 @@ namespace Server.BL
             foreach(string item in items)
             {
                 Item i = new Item();
+                i.Status = "IN_PROGRESS";
 
                 if (item == "1")
                 {
                     i.Title = "Chineese_Soup";
+                    i.Code = 1;
                 } else if(item == "2")
                 {
                     i.Title = "Chineese_Noodles";
+                    i.Code = 2;
                 } else
                 {
                     i.Title = "Chineese_Dessert";
+                    i.Code = 3;
                 }
                 i.TicketID = ticket.TicketID;
                 i.OrderID = order.OrderID;
                 itemObjects.Add(i);
             }
             ticket.Items = itemObjects;
+            unit.Save();
         }
 
         public Ticket GetTicket()
         {
             return this.ticket;
+        }
+
+        //Using command pattern
+        public async Task InitiateCookingAsync()
+        {
+            var reports = new List<Task<string>>();
+            foreach (Item item in ticket.Items)
+            {
+                CookingFactory factory;
+                ICourse course = null;
+                switch (item.Code)
+                {
+                    case 1:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateMainCourse();
+                        break;
+                    case 2:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateAppetizerCourse();
+                        break;
+                    case 3:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateDessertCourse();
+                        break;
+                    case 4:
+                        factory = new ItalianFactory();
+                        course = factory.CreateMainCourse();
+                        break;
+                    case 5:
+                        factory = new ItalianFactory();
+                        course = factory.CreateAppetizerCourse();
+                        break;
+                    case 6:
+                        factory = new ItalianFactory();
+                        course = factory.CreateDessertCourse();
+                        break;
+                }
+                reports.Add(course.CookAsync(item));
+            }
+            await Task.WhenAll(reports);
+            unit.Save();
         }
     }
 
@@ -187,6 +236,48 @@ namespace Server.BL
         public Ticket GetTicket()
         {
             return this.ticket;
+        }
+
+        public async Task InitiateCookingAsync()
+        {
+
+            var reports = new List<Task<string>>();
+            foreach (Item item in ticket.Items)
+            {
+                CookingFactory factory;
+                ICourse course = null;
+                switch (item.ItemID)
+                {
+                    case 1:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateMainCourse();
+                        break;
+                    case 2:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateAppetizerCourse();
+                        break;
+                    case 3:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateDessertCourse();
+                        break;
+                    case 4:
+                        factory = new ItalianFactory();
+                        course = factory.CreateMainCourse();
+                        break;
+                    case 5:
+                        factory = new ItalianFactory();
+                        course = factory.CreateAppetizerCourse();
+                        break;
+                    case 6:
+                        factory = new ItalianFactory();
+                        course = factory.CreateDessertCourse();
+                        break;
+                }
+                reports.Add(course.CookAsync(item));
+            }
+
+            await Task.WhenAll(reports);
+
         }
     }
 
@@ -288,6 +379,48 @@ namespace Server.BL
         {
             return this.ticket;
         }
+
+        public async Task InitiateCookingAsync()
+        {
+
+            var reports = new List<Task<string>>();
+            foreach (Item item in ticket.Items)
+            {
+                CookingFactory factory;
+                ICourse course = null;
+                switch (item.ItemID)
+                {
+                    case 1:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateMainCourse();
+                        break;
+                    case 2:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateAppetizerCourse();
+                        break;
+                    case 3:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateDessertCourse();
+                        break;
+                    case 4:
+                        factory = new ItalianFactory();
+                        course = factory.CreateMainCourse();
+                        break;
+                    case 5:
+                        factory = new ItalianFactory();
+                        course = factory.CreateAppetizerCourse();
+                        break;
+                    case 6:
+                        factory = new ItalianFactory();
+                        course = factory.CreateDessertCourse();
+                        break;
+                }
+                reports.Add(course.CookAsync(item));
+            }
+
+            await Task.WhenAll(reports);
+
+        }
     }
 
 
@@ -302,6 +435,7 @@ namespace Server.BL
             _builder.CalculateDeadline();
             _builder.GenerateTicketId();
             _builder.DecodeTitles();
+            _builder.InitiateCookingAsync();
 
             return _builder.GetTicket();
         }
