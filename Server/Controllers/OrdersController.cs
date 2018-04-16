@@ -55,8 +55,7 @@ namespace Server.Controllers
         {
             order.Status = "IN_PROGRESS";
             DiscountProxy proxy = new DiscountProxy();
-            Discount discount = proxy.AccessObject(unitOfWork, order.DiscountID);
-            order.DiscountID = discount.DiscountID;
+            proxy.AccountDiscount(unitOfWork, order.DiscountID);
 
             if (ModelState.IsValid)
             {
@@ -66,7 +65,6 @@ namespace Server.Controllers
                 Ticket ticket = dispatcher.BuildTicket(builder);
 
                 //Saving changes to db
-             //   proxy.SaveDiscount();
                 unitOfWork.OrderRepository.Insert(order);
                 unitOfWork.TicketRepository.Insert(ticket);
              

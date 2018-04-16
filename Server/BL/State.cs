@@ -15,12 +15,12 @@ namespace Server.Models
     {
         public override void NextState(Discount context)
         {
-            if (context.Balance > 500)
+            if (context.Balance > 500 && context.Balance < 10000)
             {
                 context.Upgrage(new EnhancedDiscount());
                 context.Status = "Enhanced";
             }
-            else if (context.Balance > 10000)
+            else if (context.Balance >= 10000)
             {
                 context.Upgrage(new VIPDiscount());
                 context.Status = "VIP";

@@ -10,7 +10,8 @@ namespace Server.BL
 
     public abstract class AccessProxy
     {
-        public abstract Discount AccessObject(UnitOfWork unitOfWork, int id);
+        public abstract void AccountDiscount(UnitOfWork unitOfWork, int id);
+        public abstract double GetBalance();
     }
     public class DiscountProxy : AccessProxy
     {
@@ -18,7 +19,7 @@ namespace Server.BL
         UnitOfWork unitOfWork;
         Boolean isDuplicate;
 
-        public override Discount AccessObject(UnitOfWork unitOfWork, int id)
+        public override void AccountDiscount(UnitOfWork unitOfWork, int id)
         {
             this.unitOfWork = unitOfWork;
             if (unitOfWork.DiscountRepository.GetByID(id) == null)
@@ -28,15 +29,20 @@ namespace Server.BL
                 _realObject.DiscountID = id;
                 _realObject.Status = "Regular";
                 unitOfWork.DiscountRepository.Insert(_realObject);
-                return _realObject;
+                unitOfWork.Save();
             }
             else
             {
                 isDuplicate = true;
-                return unitOfWork.DiscountRepository.GetByID(id);
             }
         }
 
-     
+
+
+        public override double GetBalance()
+        {
+            return _realObject.Balance;
+        }
+
     }
 }

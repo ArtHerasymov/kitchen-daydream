@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -12,7 +12,8 @@ namespace Server.Models
         public int DiscountID { get; set; }
         public double Balance { get; set; }
         public String Status { get; set; }
-        private State State { get; set; }
+        [NotMapped]
+        public State State { get; set; }
 
         public void Upgrage(State state)
         {
@@ -28,6 +29,21 @@ namespace Server.Models
             else 
                 return 0.25;
         
+        }
+
+        public State GetState()
+        {
+            switch (Status)
+            {
+                case "Regular":
+                    return new RegularDiscount();
+                case "Enhanced":
+                    return new EnhancedDiscount();
+                case "VIP":
+                    return new VIPDiscount();
+                default:
+                    return new RegularDiscount();
+            }
         }
 
     }
