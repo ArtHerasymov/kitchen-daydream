@@ -5,6 +5,7 @@ using System.Web;
 using Server.Models;
 using Server.DAL;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Server.BL
 {
@@ -110,7 +111,6 @@ namespace Server.BL
             return this.ticket;
         }
 
-        //Using command pattern
         public async Task InitiateCookingAsync()
         {
             var reports = new List<Task<string>>();
@@ -145,10 +145,11 @@ namespace Server.BL
                         course = factory.CreateDessertCourse();
                         break;
                 }
-                reports.Add(course.CookAsync(item));
+          
+                Thread thread = new Thread(() => course.CookAsync(item));
+                thread.Start();
             }
-            await Task.WhenAll(reports);
-            unit.Save();
+            //await Task.WhenAll(reports);
         }
     }
 
@@ -273,7 +274,6 @@ namespace Server.BL
                         course = factory.CreateDessertCourse();
                         break;
                 }
-                reports.Add(course.CookAsync(item));
             }
 
             await Task.WhenAll(reports);
@@ -415,7 +415,6 @@ namespace Server.BL
                         course = factory.CreateDessertCourse();
                         break;
                 }
-                reports.Add(course.CookAsync(item));
             }
 
             await Task.WhenAll(reports);

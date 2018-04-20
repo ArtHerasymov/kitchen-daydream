@@ -48,8 +48,7 @@ namespace Server.Controllers
                     return Json("false", JsonRequestBehavior.AllowGet);
 
             }
-            return Json("true" , JsonRequestBehavior.AllowGet);
-            //return Json(order, JsonRequestBehavior.AllowGet);
+            return Json(order.Status , JsonRequestBehavior.AllowGet);
         }
 
         // GET: Orders/Create
@@ -65,27 +64,29 @@ namespace Server.Controllers
         [HttpPost]
         public ActionResult Create([Bind(Include = "Waiter, Items, InitialPrice, DiscountID")] Order order)
         {
+            // Using : Proxy pattern
             order.Status = "IN_PROGRESS";
             DiscountProxy proxy = new DiscountProxy();
             proxy.AccountDiscount(unitOfWork, order.DiscountID);
 
             if (ModelState.IsValid)
             {
+                // Using : Builder pattern
                 Dispatcher dispatcher = new Dispatcher();
                 ITicketBuilder builder = new ChineeseBuilder(order);
-
                 Ticket ticket = dispatcher.BuildTicket(builder);
 
-                //Saving changes to db
+                // Using : Unit Of Work + Generic Repository pattern
                 unitOfWork.OrderRepository.Insert(order);
                 unitOfWork.TicketRepository.Insert(ticket);
              
                 foreach (Item i in ticket.Items)
                     unitOfWork.ItemRepository.Insert(i);
                 unitOfWork.Save();
-                return RedirectToAction("Index");
+               // return RedirectToAction("Index");
             }
-            return View(order);
+            //return View(order);
+            return Json(order.OrderID , JsonRequestBehavior.AllowGet);
         }
     
         // GET: Orders/Edit/5

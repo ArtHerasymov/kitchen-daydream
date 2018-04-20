@@ -12,7 +12,7 @@ namespace Server.BL
 
     interface ICourse
     {
-        Task<string> CookAsync(Item item);
+        void CookAsync(Item item);
     }
     public abstract class CookingFactory
     {
@@ -61,89 +61,93 @@ namespace Server.BL
 
     public abstract class MainCourse : ICourse
     {
-        public abstract Task<string> CookAsync(Item item);
+        public abstract void  CookAsync(Item item);
     }
     public abstract class DessertCourse : ICourse
     {
-        public abstract Task<string> CookAsync(Item item);
+        public abstract void CookAsync(Item item);
     }
     public abstract class AppetizerCourse : ICourse
     {
-        public abstract Task<string> CookAsync(Item item);
+        public abstract void CookAsync(Item item);
     }
 
     public class ChineeseMainCourse : MainCourse
     {
-        private int TimeOfPreperation = 500;
+        private int TimeOfPreperation = 6000;
         UnitOfWork u = new UnitOfWork();
 
-        public override async Task<string> CookAsync(Item item)
+        public override void CookAsync(Item item)
         {
-            await Task.Delay(TimeOfPreperation);
+            Thread.CurrentThread.IsBackground = true;
+            //await Task.Delay(TimeOfPreperation);
+            Thread.Sleep(TimeOfPreperation);
+
             item.ChangeStatus();
+            Item mock = new Item();
             u.ItemRepository.Update(item);
             u.Save();
-            return "Finished";
         }
     }
+
     public class ChineeseDessertCourse : DessertCourse
     {
-        private int TimeOfPreperation = 600;
+        private int TimeOfPreperation = 6000;
         UnitOfWork u = new UnitOfWork();
-        public override async Task<string> CookAsync(Item item)
+        public override void CookAsync(Item item)
         {
-            await Task.Delay(TimeOfPreperation);
+            Thread.CurrentThread.IsBackground = true;
+            //await Task.Delay(TimeOfPreperation);
+            Thread.Sleep(TimeOfPreperation);
+
             item.ChangeStatus();
             u.ItemRepository.Update(item);
             u.Save();
-            return "Finished";
         }
 
     }
+
     public class ChineeseAppetizerCourse : AppetizerCourse
     {
-        private int TimeOfPreperation = 700;
+        private int TimeOfPreperation = 6000;
         UnitOfWork u = new UnitOfWork();
-        public override async Task<string> CookAsync(Item item)
+        public override void CookAsync(Item item)
         {
-            await Task.Delay(TimeOfPreperation);
+            //  await Task.Delay(TimeOfPreperation);
+            Thread.Sleep(TimeOfPreperation);
+
             item.ChangeStatus();
             u.ItemRepository.Update(item);
             u.Save();
-            return "Finished";
         }
     }
 
     public class ItalianMainCourse : MainCourse
     {
         private int TimeOfPreperation = 100;
-        public override async Task<string> CookAsync(Item item)
+        public override void CookAsync(Item item)
         {
-            await Task.Delay(100);
-            item.ChangeStatus();
-            return "Finished";
+           
         }
     }
     public class ItalianDessertCourse : DessertCourse
     {
         private int TimeOfPreperation = 250;
     
-        public override async Task<string> CookAsync(Item item)
+        public override async void CookAsync(Item item)
         {
             await Task.Delay(100);
             item.ChangeStatus();
-            return "Finished";
         }
     }
     public class ItalianAppetizerCourse : AppetizerCourse
     {
         private int TimeOfPreperation = 310;
 
-        public override async Task<string> CookAsync(Item item)
+        public override void CookAsync(Item item)
         {
-            await Task.Delay(100);
+            //await Task.Delay(100);
             item.ChangeStatus();
-            return "Finished";
         }
     }
 }
