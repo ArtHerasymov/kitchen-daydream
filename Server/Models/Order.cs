@@ -16,6 +16,11 @@ namespace Server.Models
         //public virtual Discount Discount { get; set; }
 
         public ICollection<Item> ItemObjects { get; set; }
+
+        public void ChangeStatus()
+        {
+            this.Status = "READY";
+        }
          
 
     }

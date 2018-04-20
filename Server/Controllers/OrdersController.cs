@@ -21,7 +21,9 @@ namespace Server.Controllers
         public ActionResult Index()
         {
             var orders = unitOfWork.OrderRepository.Get();
+
             return Json(orders, JsonRequestBehavior.AllowGet);
+           
            // return View(orders.ToList());
         }
 
@@ -46,8 +48,9 @@ namespace Server.Controllers
                     return Json("false", JsonRequestBehavior.AllowGet);
                 if(item.Status != "READY")
                     return Json("false", JsonRequestBehavior.AllowGet);
-
             }
+            order.ChangeStatus();
+            unitOfWork.OrderRepository.Update(order);
             return Json(order.Status , JsonRequestBehavior.AllowGet);
         }
 

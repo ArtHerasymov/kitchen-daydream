@@ -7,7 +7,6 @@ using Server.DAL;
 
 namespace Server.BL
 {
-
     public abstract class AccessProxy
     {
         public abstract void AccountDiscount(UnitOfWork unitOfWork, int id);

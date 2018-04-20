@@ -10,7 +10,6 @@ namespace Server.Models
        public abstract void NextState(Discount context);
     }
 
-
     class RegularDiscount : State
     {
         public override void NextState(Discount context)
