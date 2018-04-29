@@ -24,7 +24,6 @@ namespace Server.Controllers
 
             return Json(orders, JsonRequestBehavior.AllowGet);
            
-           // return View(orders.ToList());
         }
 
         // GET: Orders/Details/5
@@ -65,7 +64,7 @@ namespace Server.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public ActionResult Create([Bind(Include = "Waiter, Items, InitialPrice, DiscountID")] Order order)
+        public ActionResult Create([Bind(Include = "Waiter, Items, InitialPrice, DiscountID, Locale, Type")] Order order)
         {
             // Using : Proxy pattern
             order.Status = "IN_PROGRESS";
@@ -76,7 +75,21 @@ namespace Server.Controllers
             {
                 // Using : Builder pattern
                 Dispatcher dispatcher = new Dispatcher();
-                ITicketBuilder builder = new ChineeseBuilder(order);
+                ITicketBuilder builder = null;
+
+                switch (order.Type)
+                {
+                    case "CHINEESE":
+                        builder = new ChineeseBuilder(order);
+                        break;
+                    case "ITALIAN":
+                        builder = new ItalianBuilder(order);
+                        break;
+                    case "MIXED":
+                        builder = new MixedBuilder(order);
+                        break;
+                }
+
                 Ticket ticket = dispatcher.BuildTicket(builder);
 
                 // Using : Unit Of Work + Generic Repository pattern
@@ -86,9 +99,7 @@ namespace Server.Controllers
                 foreach (Item i in ticket.Items)
                     unitOfWork.ItemRepository.Insert(i);
                 unitOfWork.Save();
-               // return RedirectToAction("Index");
             }
-            //return View(order);
             return Json(order.OrderID , JsonRequestBehavior.AllowGet);
         }
     

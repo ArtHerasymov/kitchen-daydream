@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Server.BL.AccessProxy" Collapsed="true">
+    <Position X="4.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>BL\DiscountProxy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.BL.DiscountProxy" Collapsed="true">
+    <Position X="4.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAICAAAACAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>BL\DiscountProxy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

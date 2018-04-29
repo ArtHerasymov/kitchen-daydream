@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Server.BL.CookingFactory" Collapsed="true">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhAAAAEAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.BL.ChineeseFactory" Collapsed="true">
+    <Position X="4.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhAAAAEAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.BL.ItalianFactory" Collapsed="true">
+    <Position X="7" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhAAAAEAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.BL.MainCourse" Collapsed="true">
+    <Position X="1.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Server.BL.DessertCourse" Collapsed="true">
+    <Position X="2" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Server.BL.AppetizerCourse" Collapsed="true">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Server.BL.ChineeseMainCourse" Collapsed="true">
+    <Position X="2.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAACIAAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.BL.ChineeseDessertCourse" Collapsed="true">
+    <Position X="0.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAACIAAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.BL.ChineeseAppetizerCourse" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAACIAAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.BL.ItalianMainCourse" Collapsed="true">
+    <Position X="0.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAACIAAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.BL.ItalianDessertCourse" Collapsed="true">
+    <Position X="3" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAACIAAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.BL.ItalianAppetizerCourse" Collapsed="true">
+    <Position X="0.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAACIAAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Server.BL.ICourse" Collapsed="true">
+    <Position X="5.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>BL\CookingFactory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

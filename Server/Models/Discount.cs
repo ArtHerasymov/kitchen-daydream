@@ -18,32 +18,12 @@ namespace Server.Models
         public void Upgrage(State state)
         {
             State = state;
+            Status = State.ToString().Replace("Server.Models.","");
         }
 
         public double DetermineDiscountAmount()
         {
-            if (State is RegularDiscount)
-                return 0.1;
-            else if (State is EnhancedDiscount)
-                return 0.2;
-            else 
-                return 0.25;
-        
-        }
-
-        public State GetState()
-        {
-            switch (Status)
-            {
-                case "Regular":
-                    return new RegularDiscount();
-                case "Enhanced":
-                    return new EnhancedDiscount();
-                case "VIP":
-                    return new VIPDiscount();
-                default:
-                    return new RegularDiscount();
-            }
+            return this.State.amount;      
         }
 
     }

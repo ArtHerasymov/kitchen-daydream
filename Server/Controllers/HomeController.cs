@@ -16,13 +16,13 @@ namespace Server.Controllers
 
 
             // Dump data on entry (Using Bridge pattern)
-            IBackupPlan backupPlan;
+            AbstractBackupManager backupManager;
             if (CheckForInternetConnection())
-                backupPlan = new OnlineBackup();
+                backupManager = new AbstractBackupManager(new OnlineBackup());
             else
-                backupPlan = new OfflineBackup();
+                backupManager = new AbstractBackupManager(new OfflineBackup());
 
-            backupPlan.DumpData();
+            backupManager.DumpData();
 
             return View();
         }

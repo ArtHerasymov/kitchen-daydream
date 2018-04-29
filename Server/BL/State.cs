@@ -7,11 +7,13 @@ namespace Server.Models
 {
     public abstract class State
     {
+        public double amount;
        public abstract void NextState(Discount context);
     }
 
     class RegularDiscount : State
     {
+        public double amount = 0.1;
         public override void NextState(Discount context)
         {
             if (context.Balance > 500 && context.Balance < 10000)
@@ -29,6 +31,7 @@ namespace Server.Models
 
     class EnhancedDiscount : State
     {
+        public double amount = 0.2;
         public override void NextState(Discount context)
         {
             if (context.Balance > 10000)
@@ -41,11 +44,10 @@ namespace Server.Models
 
     class VIPDiscount : State
     {
+        public double amount = 0.33;
         public override void NextState(Discount context)
         {
-            // Can't give you a better deal(yet)
+            Console.WriteLine("Can't give you a better deal, sorry!");
         }
     }
-
-
 }

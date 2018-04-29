@@ -14,6 +14,7 @@ namespace Server.BL
     {
         void CookAsync(Item item);
     }
+
     public abstract class CookingFactory
     {
         public abstract DessertCourse CreateDessertCourse();
@@ -80,11 +81,9 @@ namespace Server.BL
         public override void CookAsync(Item item)
         {
             Thread.CurrentThread.IsBackground = true;
-            //await Task.Delay(TimeOfPreperation);
             Thread.Sleep(TimeOfPreperation);
 
             item.ChangeStatus();
-            Item mock = new Item();
             u.ItemRepository.Update(item);
             u.Save();
         }
@@ -97,7 +96,6 @@ namespace Server.BL
         public override void CookAsync(Item item)
         {
             Thread.CurrentThread.IsBackground = true;
-            //await Task.Delay(TimeOfPreperation);
             Thread.Sleep(TimeOfPreperation);
 
             item.ChangeStatus();
@@ -113,7 +111,6 @@ namespace Server.BL
         UnitOfWork u = new UnitOfWork();
         public override void CookAsync(Item item)
         {
-            //  await Task.Delay(TimeOfPreperation);
             Thread.Sleep(TimeOfPreperation);
 
             item.ChangeStatus();
@@ -124,30 +121,49 @@ namespace Server.BL
 
     public class ItalianMainCourse : MainCourse
     {
-        private int TimeOfPreperation = 100;
+        UnitOfWork u = new UnitOfWork();
+
+        private int TimeOfPreperation = 5000;
         public override void CookAsync(Item item)
         {
-           
+            Thread.CurrentThread.IsBackground = true;
+            Thread.Sleep(TimeOfPreperation);
+
+            item.ChangeStatus();
+            u.ItemRepository.Update(item);
+            u.Save();
         }
     }
     public class ItalianDessertCourse : DessertCourse
     {
-        private int TimeOfPreperation = 250;
-    
-        public override async void CookAsync(Item item)
+        UnitOfWork u = new UnitOfWork();
+
+        private int TimeOfPreperation = 6100;
+
+        public override void CookAsync(Item item)
         {
-            await Task.Delay(100);
+            Thread.CurrentThread.IsBackground = true;
+            Thread.Sleep(TimeOfPreperation);
+
             item.ChangeStatus();
+            u.ItemRepository.Update(item);
+            u.Save();
         }
     }
     public class ItalianAppetizerCourse : AppetizerCourse
     {
-        private int TimeOfPreperation = 310;
+        UnitOfWork u = new UnitOfWork();
+
+        private int TimeOfPreperation = 7400;
 
         public override void CookAsync(Item item)
         {
-            //await Task.Delay(100);
+            Thread.CurrentThread.IsBackground = true;
+            Thread.Sleep(TimeOfPreperation);
+
             item.ChangeStatus();
+            u.ItemRepository.Update(item);
+            u.Save();
         }
     }
 }

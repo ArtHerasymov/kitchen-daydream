@@ -26,7 +26,7 @@ namespace Server.BL
     {
         String[] items;
         List<Item> itemObjects = new List<Item>();
-        Ticket ticket = new Ticket();
+        Ticket ticket;
         Order order;
         UnitOfWork unit = new UnitOfWork();
 
@@ -34,8 +34,9 @@ namespace Server.BL
         {
             this.order = order;
             this.items = order.Items.Split(',');
+            this.ticket = new Ticket();
         }
-
+   
         public void SetTicketType()
         {
             this.ticket.TicketType = "Chineese";
@@ -43,8 +44,8 @@ namespace Server.BL
 
         public void AssignChiefs()
         {
-            ticket.Chief = "Drew";
-            ticket.Suchief = "Danny";
+            ticket.Chief = "Kim Yin";
+            ticket.Suchief = "Yao Min";
         }
 
         public void CalculateDeadline()
@@ -56,26 +57,41 @@ namespace Server.BL
         {
             Accounting accounting = new Accounting();
             UnitOfWork unit = new UnitOfWork();
+        
             Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
-            double discountAmount;
-            if (discount == null)
-                discountAmount = 0;
-            else
-                discountAmount = discount.DetermineDiscountAmount();
+            switch (discount.Status)
+            {
+                case "RegularDiscount":
+                    discount.Upgrage(new RegularDiscount());
+                    break;
+                case "EnhancedDiscount":
+                    discount.Upgrage(new EnhancedDiscount());
+                    break;
+                case "VIPDiscount":
+                    discount.Upgrage(new VIPDiscount());
+                    break;
+            }
 
-            accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discountAmount * order.InitialPrice;
+            switch (order.Locale)
+            {
+                case "USA":
+                    accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
+                    break;
+                case "EU":
+                    accounting.SetCurrentSubsidiary(new EuropeanTaxPolicy());
+                    break;
+            }
+
+            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discount.DetermineDiscountAmount() * order.InitialPrice;
             discount.Balance += ticket.FinalPrice;
-            State state = discount.GetState();
-            state.NextState(discount);
 
+            discount.State.NextState(discount);
             unit.Save();
         }
 
         public void GenerateTicketId()
         {
             ticket.TicketID = "CHI" + new Random().Next();
-
         }
 
         public void DecodeTitles()
@@ -149,7 +165,6 @@ namespace Server.BL
                 Thread thread = new Thread(() => course.CookAsync(item));
                 thread.Start();
             }
-            //await Task.WhenAll(reports);
         }
     }
 
@@ -168,15 +183,15 @@ namespace Server.BL
             this.order = order;
             this.items = order.Items.Split(',');
         }
-
+      
         public void SetTicketType()
         {
             this.ticket.TicketType = "Italian";
         }
         public void AssignChiefs()
         {
-            ticket.Chief = "Drew";
-            ticket.Suchief = "Danny";
+            ticket.Chief = "Janne Papuo";
+            ticket.Suchief = "Quentin Tarantino";
         }
 
         public void CalculateDeadline()
@@ -188,19 +203,35 @@ namespace Server.BL
         {
             Accounting accounting = new Accounting();
             UnitOfWork unit = new UnitOfWork();
+
             Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
-            double discountAmount;
-            if (discount == null)
-                discountAmount = 0;
-            else
-                discountAmount = discount.DetermineDiscountAmount();
+            switch (discount.Status)
+            {
+                case "Regular":
+                    discount.Upgrage(new RegularDiscount());
+                    break;
+                case "Enhanced":
+                    discount.Upgrage(new EnhancedDiscount());
+                    break;
+                case "VIPDiscount":
+                    discount.Upgrage(new VIPDiscount());
+                    break;
+            }
 
-            accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discountAmount * order.InitialPrice;
+            switch (order.Locale)
+            {
+                case "USA":
+                    accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
+                    break;
+                case "EU":
+                    accounting.SetCurrentSubsidiary(new EuropeanTaxPolicy());
+                    break;
+            }
+
+            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discount.DetermineDiscountAmount() * order.InitialPrice;
             discount.Balance += ticket.FinalPrice;
-            State state = discount.GetState();
-            state.NextState(discount);
 
+            discount.State.NextState(discount);
             unit.Save();
         }
 
@@ -209,18 +240,22 @@ namespace Server.BL
             foreach (string item in items)
             {
                 Item i = new Item();
+                i.Status = "IN_PROGRESS";
 
                 if (item == "4")
                 {
                     i.Title = "Italian_Soup";
+                    i.Code = 4;
                 }
                 else if (item == "5")
                 {
                     i.Title = "Italian_Spaghetti";
+                    i.Code = 5;
                 }
                 else
                 {
                     i.Title = "Italian_Dessert";
+                    i.Code = 6;
                 }
                 i.TicketID = ticket.TicketID;
                 i.OrderID = order.OrderID;
@@ -241,13 +276,12 @@ namespace Server.BL
 
         public async Task InitiateCookingAsync()
         {
-
             var reports = new List<Task<string>>();
             foreach (Item item in ticket.Items)
             {
                 CookingFactory factory;
                 ICourse course = null;
-                switch (item.ItemID)
+                switch (item.Code)
                 {
                     case 1:
                         factory = new ChineeseFactory();
@@ -274,10 +308,10 @@ namespace Server.BL
                         course = factory.CreateDessertCourse();
                         break;
                 }
+
+                Thread thread = new Thread(() => course.CookAsync(item));
+                thread.Start();
             }
-
-            await Task.WhenAll(reports);
-
         }
     }
 
@@ -289,7 +323,7 @@ namespace Server.BL
         double finalPrice;
         string type;
         Order order;
-
+    
         public void SetTicketType()
         {
             this.type = "MIXED";
@@ -303,8 +337,8 @@ namespace Server.BL
 
         public void AssignChiefs()
         {
-            ticket.Chief = "Drew";
-            ticket.Suchief = "Danny";
+            ticket.Chief = "Johny Depp";
+            ticket.Suchief = "Frank Sinatra";
         }
 
         public void CalculateDeadline()
@@ -316,19 +350,35 @@ namespace Server.BL
         {
             Accounting accounting = new Accounting();
             UnitOfWork unit = new UnitOfWork();
+
             Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
-            double discountAmount;
-            if (discount == null)
-                discountAmount = 0;
-            else
-                discountAmount = discount.DetermineDiscountAmount();
+            switch (discount.Status)
+            {
+                case "Regular":
+                    discount.Upgrage(new RegularDiscount());
+                    break;
+                case "Enhanced":
+                    discount.Upgrage(new EnhancedDiscount());
+                    break;
+                case "VIPDiscount":
+                    discount.Upgrage(new VIPDiscount());
+                    break;
+            }
 
-            accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discountAmount * order.InitialPrice;
+            switch (order.Locale)
+            {
+                case "USA":
+                    accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
+                    break;
+                case "EU":
+                    accounting.SetCurrentSubsidiary(new EuropeanTaxPolicy());
+                    break;
+            }
+
+            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discount.DetermineDiscountAmount() * order.InitialPrice;
             discount.Balance += ticket.FinalPrice;
-            State state = discount.GetState();
-            state.NextState(discount);
 
+            discount.State.NextState(discount);
             unit.Save();
         }
 
@@ -337,30 +387,37 @@ namespace Server.BL
             foreach (string item in items)
             {
                 Item i = new Item();
+                i.Status = "IN_PROGRESS";
 
                 if (item == "1")
                 {
                     i.Title = "Chineese_Soup";
+                    i.Code = 1;
                 }
                 else if (item == "2")
                 {
                     i.Title = "Chineese_Noodles";
+                    i.Code = 2;
                 }
                 else if(item == "3")
                 {
                     i.Title = "Chineese_Dessert";
+                    i.Code = 3;
                 }
                 else if (item == "4")
                 {
                     i.Title = "Italian_Soup";
+                    i.Code = 4;
                 }
                 else if (item == "5")
                 {
                     i.Title = "Italian_Spaghetti";
+                    i.Code = 5;
                 }
                 else
                 {
                     i.Title = "Italian_Dessert";
+                    i.Code = 6;
                 }
                 i.TicketID = ticket.TicketID;
                 i.OrderID = order.OrderID;
@@ -382,13 +439,12 @@ namespace Server.BL
 
         public async Task InitiateCookingAsync()
         {
-
             var reports = new List<Task<string>>();
             foreach (Item item in ticket.Items)
             {
                 CookingFactory factory;
                 ICourse course = null;
-                switch (item.ItemID)
+                switch (item.Code)
                 {
                     case 1:
                         factory = new ChineeseFactory();
@@ -415,17 +471,15 @@ namespace Server.BL
                         course = factory.CreateDessertCourse();
                         break;
                 }
+
+                Thread thread = new Thread(() => course.CookAsync(item));
+                thread.Start();
             }
-
-            await Task.WhenAll(reports);
-
         }
     }
 
-
     public class Dispatcher
     {
-
         public Ticket BuildTicket(ITicketBuilder _builder)
         {
             _builder.SetTicketType();

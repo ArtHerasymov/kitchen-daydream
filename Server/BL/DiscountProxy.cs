@@ -21,11 +21,12 @@ namespace Server.BL
         public override void AccountDiscount(UnitOfWork unitOfWork, int id)
         {
             this.unitOfWork = unitOfWork;
+
             if (unitOfWork.DiscountRepository.GetByID(id) == null)
             {
                 _realObject = new Discount();
                 _realObject.DiscountID = id;
-                _realObject.Status = "Regular";
+                _realObject.Upgrage(new RegularDiscount());
                 unitOfWork.DiscountRepository.Insert(_realObject);
                 unitOfWork.Save();
             }

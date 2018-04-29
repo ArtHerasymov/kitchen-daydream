@@ -12,6 +12,7 @@ namespace Server.Models
         {
             this.Orders = new HashSet<Order>();
             this.Items = new HashSet<Item>();
+            this.Status = "IN_PROGRESS";
         }
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string TicketID { get; set; }
