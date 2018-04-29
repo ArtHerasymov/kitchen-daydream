@@ -192,7 +192,7 @@
     <Compile Include="BL\BackupBridge.cs" />
     <Compile Include="BL\CookingFactory.cs" />
     <Compile Include="BL\DiscountProxy.cs" />
-    <Compile Include="BL\SalesTaxStrategy.cs" />
+    <Compile Include="BL\SalesTaxTemplate.cs" />
     <Compile Include="BL\TicketBuilder.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />

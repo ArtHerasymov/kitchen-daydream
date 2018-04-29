@@ -21,6 +21,22 @@ namespace Server.Models
             Status = State.ToString().Replace("Server.Models.","");
         }
 
+        public void TranscribeState()
+        {
+            switch (Status)
+            {
+                case "RegularDiscount":
+                    this.State = new RegularDiscount();
+                    break;
+                case "EnhancedDiscount":
+                    this.State = new EnhancedDiscount();
+                    break;
+                case "VIP":
+                    this.State = new VIPDiscount();
+                    break;
+            }
+        }
+
         public double DetermineDiscountAmount()
         {
             return this.State.amount;      

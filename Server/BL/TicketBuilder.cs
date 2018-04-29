@@ -13,6 +13,7 @@ namespace Server.BL
     {
         void SetTicketType();
         void AssignChiefs();
+        void SetLocale();
         void CalculateFinalPrice();
         void CalculateDeadline();
         void DecodeTitles();
@@ -29,6 +30,8 @@ namespace Server.BL
         Ticket ticket;
         Order order;
         UnitOfWork unit = new UnitOfWork();
+        Accounting accounting;
+
 
         public ChineeseBuilder(Order order)
         {
@@ -39,7 +42,7 @@ namespace Server.BL
    
         public void SetTicketType()
         {
-            this.ticket.TicketType = "Chineese";
+            this.ticket.TicketType = "CHINEESE";
         }
 
         public void AssignChiefs()
@@ -55,34 +58,14 @@ namespace Server.BL
 
         public void CalculateFinalPrice()
         {
-            Accounting accounting = new Accounting();
             UnitOfWork unit = new UnitOfWork();
-        
+
             Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
-            switch (discount.Status)
-            {
-                case "RegularDiscount":
-                    discount.Upgrage(new RegularDiscount());
-                    break;
-                case "EnhancedDiscount":
-                    discount.Upgrage(new EnhancedDiscount());
-                    break;
-                case "VIPDiscount":
-                    discount.Upgrage(new VIPDiscount());
-                    break;
-            }
+            discount.TranscribeState();
 
-            switch (order.Locale)
-            {
-                case "USA":
-                    accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-                    break;
-                case "EU":
-                    accounting.SetCurrentSubsidiary(new EuropeanTaxPolicy());
-                    break;
-            }
+            ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type , order.InitialPrice)
+                - discount.DetermineDiscountAmount() * order.InitialPrice;
 
-            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discount.DetermineDiscountAmount() * order.InitialPrice;
             discount.Balance += ticket.FinalPrice;
 
             discount.State.NextState(discount);
@@ -166,6 +149,22 @@ namespace Server.BL
                 thread.Start();
             }
         }
+
+        public void SetLocale()
+        {
+            switch (order.Locale)
+            {
+                case "USA":
+                    accounting = new AmericanTax();
+                    break;
+                case "EU":
+                    accounting = new EuropeanTax();
+                    break;
+                default:
+                    accounting = null;
+                    break;
+            }
+        }
     }
 
     public class ItalianBuilder : ITicketBuilder
@@ -177,6 +176,7 @@ namespace Server.BL
         double finalPrice;
         string type;
         Order order;
+        Accounting accounting;
 
         public ItalianBuilder(Order order)
         {
@@ -186,7 +186,7 @@ namespace Server.BL
       
         public void SetTicketType()
         {
-            this.ticket.TicketType = "Italian";
+            this.ticket.TicketType = "ITALIAN";
         }
         public void AssignChiefs()
         {
@@ -201,34 +201,15 @@ namespace Server.BL
 
         public void CalculateFinalPrice()
         {
-            Accounting accounting = new Accounting();
+
             UnitOfWork unit = new UnitOfWork();
 
             Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
-            switch (discount.Status)
-            {
-                case "Regular":
-                    discount.Upgrage(new RegularDiscount());
-                    break;
-                case "Enhanced":
-                    discount.Upgrage(new EnhancedDiscount());
-                    break;
-                case "VIPDiscount":
-                    discount.Upgrage(new VIPDiscount());
-                    break;
-            }
+            discount.TranscribeState();
 
-            switch (order.Locale)
-            {
-                case "USA":
-                    accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-                    break;
-                case "EU":
-                    accounting.SetCurrentSubsidiary(new EuropeanTaxPolicy());
-                    break;
-            }
+            ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice)
+                - discount.DetermineDiscountAmount() * order.InitialPrice;
 
-            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discount.DetermineDiscountAmount() * order.InitialPrice;
             discount.Balance += ticket.FinalPrice;
 
             discount.State.NextState(discount);
@@ -313,6 +294,22 @@ namespace Server.BL
                 thread.Start();
             }
         }
+
+        public void SetLocale()
+        {
+            switch (order.Locale)
+            {
+                case "USA":
+                    accounting = new AmericanTax();
+                    break;
+                case "EU":
+                    accounting = new EuropeanTax();
+                    break;
+                default:
+                    accounting = null;
+                    break;
+            }
+        }
     }
 
     public class MixedBuilder : ITicketBuilder
@@ -323,6 +320,7 @@ namespace Server.BL
         double finalPrice;
         string type;
         Order order;
+        Accounting accounting;
     
         public void SetTicketType()
         {
@@ -348,34 +346,15 @@ namespace Server.BL
 
         public void CalculateFinalPrice()
         {
-            Accounting accounting = new Accounting();
             UnitOfWork unit = new UnitOfWork();
 
             Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
-            switch (discount.Status)
-            {
-                case "Regular":
-                    discount.Upgrage(new RegularDiscount());
-                    break;
-                case "Enhanced":
-                    discount.Upgrage(new EnhancedDiscount());
-                    break;
-                case "VIPDiscount":
-                    discount.Upgrage(new VIPDiscount());
-                    break;
-            }
+            discount.TranscribeState();
+       
 
-            switch (order.Locale)
-            {
-                case "USA":
-                    accounting.SetCurrentSubsidiary(new AmericanTaxPolicy());
-                    break;
-                case "EU":
-                    accounting.SetCurrentSubsidiary(new EuropeanTaxPolicy());
-                    break;
-            }
+            ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice)
+                - discount.DetermineDiscountAmount() * order.InitialPrice;
 
-            ticket.FinalPrice = order.InitialPrice + accounting.GetSalesTax(order.InitialPrice, this.ticket.TicketType) - discount.DetermineDiscountAmount() * order.InitialPrice;
             discount.Balance += ticket.FinalPrice;
 
             discount.State.NextState(discount);
@@ -439,41 +418,61 @@ namespace Server.BL
 
         public async Task InitiateCookingAsync()
         {
-            var reports = new List<Task<string>>();
-            foreach (Item item in ticket.Items)
-            {
-                CookingFactory factory;
-                ICourse course = null;
-                switch (item.Code)
-                {
-                    case 1:
-                        factory = new ChineeseFactory();
-                        course = factory.CreateMainCourse();
-                        break;
-                    case 2:
-                        factory = new ChineeseFactory();
-                        course = factory.CreateAppetizerCourse();
-                        break;
-                    case 3:
-                        factory = new ChineeseFactory();
-                        course = factory.CreateDessertCourse();
-                        break;
-                    case 4:
-                        factory = new ItalianFactory();
-                        course = factory.CreateMainCourse();
-                        break;
-                    case 5:
-                        factory = new ItalianFactory();
-                        course = factory.CreateAppetizerCourse();
-                        break;
-                    case 6:
-                        factory = new ItalianFactory();
-                        course = factory.CreateDessertCourse();
-                        break;
-                }
+            Accounting accounting;
+            UnitOfWork unit = new UnitOfWork();
 
-                Thread thread = new Thread(() => course.CookAsync(item));
-                thread.Start();
+            Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
+
+            switch (discount.Status)
+            {
+                case "RegularDiscount":
+                    discount.Upgrage(new RegularDiscount());
+                    break;
+                case "EnhancedDiscount":
+                    discount.Upgrage(new EnhancedDiscount());
+                    break;
+                case "VIPDiscount":
+                    discount.Upgrage(new VIPDiscount());
+                    break;
+            }
+
+            switch (order.Locale)
+            {
+                case "USA":
+                    accounting = new AmericanTax();
+                    break;
+                case "EU":
+                    accounting = new EuropeanTax();
+                    break;
+                default:
+                    accounting = null;
+                    break;
+            }
+
+
+
+            ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice)
+                - discount.DetermineDiscountAmount() * order.InitialPrice;
+
+            discount.Balance += ticket.FinalPrice;
+
+            discount.State.NextState(discount);
+            unit.Save();
+        }
+
+        public void SetLocale()
+        {
+            switch (order.Locale)
+            {
+                case "USA":
+                    accounting = new AmericanTax();
+                    break;
+                case "EU":
+                    accounting = new EuropeanTax();
+                    break;
+                default:
+                    accounting = null;
+                    break;
             }
         }
     }
@@ -484,6 +483,7 @@ namespace Server.BL
         {
             _builder.SetTicketType();
             _builder.AssignChiefs();
+            _builder.SetLocale();
             _builder.CalculateFinalPrice();
             _builder.CalculateDeadline();
             _builder.GenerateTicketId();
