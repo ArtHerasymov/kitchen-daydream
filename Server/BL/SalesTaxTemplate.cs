@@ -11,10 +11,9 @@ namespace Server.BL
     {
 
         dynamic deserializedValue;
-
         public TaxReference()
         {
-            string contents = File.ReadAllText(@"E:\TaxAPI.txt");
+            string contents = File.ReadAllText(@"E:\TaxAPI.json");
             deserializedValue = JsonConvert.DeserializeObject(contents);
         }
 
@@ -66,7 +65,7 @@ namespace Server.BL
         public abstract double CalculateSanction(string menuType);
         public double GetAdditionalPrice(string menuType, double initialPrice)
         {
-            return CalculateSanction(menuType) + CalculateTax(initialPrice);
+            return initialPrice * (CalculateSanction(menuType) + CalculateTax(initialPrice));
         }
     }
 
@@ -84,9 +83,9 @@ namespace Server.BL
         public override double CalculateTax(double initialPrice)
         {
             if(initialPrice < taxReference.GetFirstLevelTreshold())
-                return initialPrice * taxReference.GetFirstLevelAmericanTax();
+                return taxReference.GetFirstLevelAmericanTax();
             else
-                return initialPrice * taxReference.GetSecondLevelAmericanTax();
+                return taxReference.GetSecondLevelAmericanTax();
         }
     }
 
@@ -104,9 +103,9 @@ namespace Server.BL
         public override double CalculateTax(double initialPrice)
         {
             if (initialPrice < taxReference.GetFirstLevelTreshold())
-                return initialPrice * taxReference.GetFirstLevelEuropeanTax();
+                return taxReference.GetFirstLevelEuropeanTax();
             else
-                return initialPrice * taxReference.GetSecondLevelEuropeanTax();
+                return taxReference.GetSecondLevelEuropeanTax();
         }
     }
 
@@ -123,9 +122,9 @@ namespace Server.BL
         public override double CalculateTax(double initialPrice)
         {
             if (initialPrice < taxReference.GetFirstLevelTreshold())
-                return initialPrice * taxReference.GetFirstLevelAsianTax();
+                return taxReference.GetFirstLevelAsianTax();
             else
-                return initialPrice * taxReference.GetSecondLevelAsianTax();
+                return taxReference.GetSecondLevelAsianTax();
         }
     }
 }

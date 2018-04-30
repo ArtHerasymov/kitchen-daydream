@@ -39,7 +39,7 @@ namespace Server.Models
 
         public double DetermineDiscountAmount()
         {
-            return this.State.amount;      
+            return (int)this.State.GetAmount() / 100.0;   
         }
 
     }

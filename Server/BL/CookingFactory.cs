@@ -6,6 +6,8 @@ using System.Web;
 using Server.Models;
 using System.Threading.Tasks;
 using Server.DAL;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Server.BL
 {
@@ -19,15 +21,15 @@ namespace Server.BL
     {
         public abstract DessertCourse CreateDessertCourse();
         public abstract MainCourse CreateMainCourse();
-        public abstract AppetizerCourse CreateAppetizerCourse();
+        public abstract SoupCourse CreateSoupCourse();
     }
 
     public class ChineeseFactory : CookingFactory
 
     {
-        public override AppetizerCourse CreateAppetizerCourse()
+        public override SoupCourse CreateSoupCourse()
         {
-            return new ChineeseAppetizerCourse();
+            return new ChineeseSoupCourse();
         }
 
         public override DessertCourse CreateDessertCourse()
@@ -43,9 +45,9 @@ namespace Server.BL
 
     public class ItalianFactory : CookingFactory
     {
-        public override AppetizerCourse CreateAppetizerCourse()
+        public override SoupCourse CreateSoupCourse()
         {
-            return new ItalianAppetizerCourse();
+            return new ItalianSoupCourse();
         }
 
         public override DessertCourse CreateDessertCourse()
@@ -68,35 +70,35 @@ namespace Server.BL
     {
         public abstract void CookAsync(Item item);
     }
-    public abstract class AppetizerCourse : ICourse
+    public abstract class SoupCourse : ICourse
     {
         public abstract void CookAsync(Item item);
     }
 
+
     public class ChineeseMainCourse : MainCourse
     {
-        private int TimeOfPreperation = 6000;
-        UnitOfWork u = new UnitOfWork();
 
+        UnitOfWork u = new UnitOfWork();
+        TechnologyReference reference = new TechnologyReference();
         public override void CookAsync(Item item)
         {
             Thread.CurrentThread.IsBackground = true;
-            Thread.Sleep(TimeOfPreperation);
+            Thread.Sleep(reference.GetChineeseMainTime());
 
             item.ChangeStatus();
             u.ItemRepository.Update(item);
             u.Save();
         }
     }
-
     public class ChineeseDessertCourse : DessertCourse
     {
-        private int TimeOfPreperation = 6000;
+        TechnologyReference reference = new TechnologyReference();
         UnitOfWork u = new UnitOfWork();
         public override void CookAsync(Item item)
         {
             Thread.CurrentThread.IsBackground = true;
-            Thread.Sleep(TimeOfPreperation);
+            Thread.Sleep(reference.GetChineeseDessertTime());
 
             item.ChangeStatus();
             u.ItemRepository.Update(item);
@@ -104,14 +106,13 @@ namespace Server.BL
         }
 
     }
-
-    public class ChineeseAppetizerCourse : AppetizerCourse
+    public class ChineeseSoupCourse : SoupCourse
     {
-        private int TimeOfPreperation = 6000;
+        TechnologyReference reference = new TechnologyReference();
         UnitOfWork u = new UnitOfWork();
         public override void CookAsync(Item item)
         {
-            Thread.Sleep(TimeOfPreperation);
+            Thread.Sleep(reference.GetChineeseSoupTime());
 
             item.ChangeStatus();
             u.ItemRepository.Update(item);
@@ -122,12 +123,11 @@ namespace Server.BL
     public class ItalianMainCourse : MainCourse
     {
         UnitOfWork u = new UnitOfWork();
-
-        private int TimeOfPreperation = 5000;
+        TechnologyReference reference = new TechnologyReference();
         public override void CookAsync(Item item)
         {
             Thread.CurrentThread.IsBackground = true;
-            Thread.Sleep(TimeOfPreperation);
+            Thread.Sleep(reference.GetItalianMainTime());
 
             item.ChangeStatus();
             u.ItemRepository.Update(item);
@@ -137,33 +137,69 @@ namespace Server.BL
     public class ItalianDessertCourse : DessertCourse
     {
         UnitOfWork u = new UnitOfWork();
-
-        private int TimeOfPreperation = 6100;
+        TechnologyReference reference = new TechnologyReference();
 
         public override void CookAsync(Item item)
         {
             Thread.CurrentThread.IsBackground = true;
-            Thread.Sleep(TimeOfPreperation);
+            Thread.Sleep(reference.GetItalianDessertTime());
 
             item.ChangeStatus();
             u.ItemRepository.Update(item);
             u.Save();
         }
     }
-    public class ItalianAppetizerCourse : AppetizerCourse
+    public class ItalianSoupCourse : SoupCourse
     {
         UnitOfWork u = new UnitOfWork();
-
-        private int TimeOfPreperation = 7400;
+        TechnologyReference reference = new TechnologyReference();
 
         public override void CookAsync(Item item)
         {
             Thread.CurrentThread.IsBackground = true;
-            Thread.Sleep(TimeOfPreperation);
+            Thread.Sleep(reference.GetItalianSoupTime());
 
             item.ChangeStatus();
             u.ItemRepository.Update(item);
             u.Save();
         }
+    }
+
+    public class TechnologyReference
+    {
+        dynamic deserializedValue;
+        public TechnologyReference()
+        {
+            string contents = File.ReadAllText(@"E:\CookingTechnologyAPI.json");
+            deserializedValue = JsonConvert.DeserializeObject(contents);
+        }
+
+        public int GetChineeseSoupTime()
+        {
+            return deserializedValue["TimeOfPreperation"]["ChineesePreperation"]["LotusRootSoup"];
+        }
+        public int GetChineeseMainTime()
+        {
+            return deserializedValue["TimeOfPreperation"]["ChineesePreperation"]["Noodles"];
+        }
+        public int GetChineeseDessertTime()
+        {
+            return deserializedValue["TimeOfPreperation"]["ChineesePreperation"]["StrawberryKuchi"];
+        }
+        public int GetItalianSoupTime()
+        {
+            return deserializedValue["TimeOfPreperation"]["ItalianPreperation"]["RoastedSoup"];
+        }
+        public int GetItalianMainTime()
+        {
+            return deserializedValue["TimeOfPreperation"]["ItalianPreperation"]["Carbonara"];
+        }
+        public int GetItalianDessertTime()
+        {
+            return deserializedValue["TimeOfPreperation"]["ItalianPreperation"]["Pancakes"];
+        }
+
+
+
     }
 }

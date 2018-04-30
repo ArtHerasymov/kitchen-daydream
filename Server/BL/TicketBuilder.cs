@@ -6,6 +6,8 @@ using Server.Models;
 using Server.DAL;
 using System.Threading.Tasks;
 using System.Threading;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Server.BL
 {
@@ -47,8 +49,10 @@ namespace Server.BL
 
         public void AssignChiefs()
         {
-            ticket.Chief = "Kim Yin";
-            ticket.Suchief = "Yao Min";
+            string contents = File.ReadAllText(@"E:\ChiefsAPI.json");
+            dynamic deserializedValue = JsonConvert.DeserializeObject(contents);
+            ticket.Chief = deserializedValue["ChineeseChiefs"]["Chief"];
+            ticket.Suchief = deserializedValue["ChineeseChiefs"]["SuChief"];
         }
 
         public void CalculateDeadline()
@@ -121,11 +125,11 @@ namespace Server.BL
                 {
                     case 1:
                         factory = new ChineeseFactory();
-                        course = factory.CreateMainCourse();
+                        course = factory.CreateSoupCourse();
                         break;
                     case 2:
                         factory = new ChineeseFactory();
-                        course = factory.CreateAppetizerCourse();
+                        course = factory.CreateMainCourse();
                         break;
                     case 3:
                         factory = new ChineeseFactory();
@@ -133,11 +137,11 @@ namespace Server.BL
                         break;
                     case 4:
                         factory = new ItalianFactory();
-                        course = factory.CreateMainCourse();
+                        course = factory.CreateSoupCourse();
                         break;
                     case 5:
                         factory = new ItalianFactory();
-                        course = factory.CreateAppetizerCourse();
+                        course = factory.CreateMainCourse();
                         break;
                     case 6:
                         factory = new ItalianFactory();
@@ -173,8 +177,6 @@ namespace Server.BL
         String[] items;
         List<Item> itemObjects = new List<Item>();
         Ticket ticket = new Ticket();
-        double finalPrice;
-        string type;
         Order order;
         Accounting accounting;
 
@@ -190,8 +192,10 @@ namespace Server.BL
         }
         public void AssignChiefs()
         {
-            ticket.Chief = "Janne Papuo";
-            ticket.Suchief = "Quentin Tarantino";
+            string contents = File.ReadAllText(@"E:\ChiefsAPI.json");
+            dynamic deserializedValue = JsonConvert.DeserializeObject(contents);
+            ticket.Chief = deserializedValue["ItalianChiefs"]["Chief"];
+            ticket.Suchief = deserializedValue["ItalianChiefs"]["SuChief"];
         }
 
         public void CalculateDeadline()
@@ -266,11 +270,11 @@ namespace Server.BL
                 {
                     case 1:
                         factory = new ChineeseFactory();
-                        course = factory.CreateMainCourse();
+                        course = factory.CreateSoupCourse();
                         break;
                     case 2:
                         factory = new ChineeseFactory();
-                        course = factory.CreateAppetizerCourse();
+                        course = factory.CreateMainCourse();
                         break;
                     case 3:
                         factory = new ChineeseFactory();
@@ -278,11 +282,11 @@ namespace Server.BL
                         break;
                     case 4:
                         factory = new ItalianFactory();
-                        course = factory.CreateMainCourse();
+                        course = factory.CreateSoupCourse();
                         break;
                     case 5:
                         factory = new ItalianFactory();
-                        course = factory.CreateAppetizerCourse();
+                        course = factory.CreateMainCourse();
                         break;
                     case 6:
                         factory = new ItalianFactory();
@@ -317,14 +321,12 @@ namespace Server.BL
         String[] items;
         List<Item> itemObjects = new List<Item>();
         Ticket ticket = new Ticket();
-        double finalPrice;
-        string type;
         Order order;
         Accounting accounting;
     
         public void SetTicketType()
         {
-            this.type = "MIXED";
+            this.ticket.TicketType = "MIXED";
         }
 
         public MixedBuilder(Order order)
@@ -335,8 +337,10 @@ namespace Server.BL
 
         public void AssignChiefs()
         {
-            ticket.Chief = "Johny Depp";
-            ticket.Suchief = "Frank Sinatra";
+            string contents = File.ReadAllText(@"E:\ChiefsAPI.json");
+            dynamic deserializedValue = JsonConvert.DeserializeObject(contents);
+            ticket.Chief = deserializedValue["ItalianChiefs"]["Chief"];
+            ticket.Suchief = deserializedValue["ChineeseChiefs"]["Chief"];
         }
 
         public void CalculateDeadline()
@@ -418,46 +422,42 @@ namespace Server.BL
 
         public async Task InitiateCookingAsync()
         {
-            Accounting accounting;
-            UnitOfWork unit = new UnitOfWork();
-
-            Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
-
-            switch (discount.Status)
+            var reports = new List<Task<string>>();
+            foreach (Item item in ticket.Items)
             {
-                case "RegularDiscount":
-                    discount.Upgrage(new RegularDiscount());
-                    break;
-                case "EnhancedDiscount":
-                    discount.Upgrage(new EnhancedDiscount());
-                    break;
-                case "VIPDiscount":
-                    discount.Upgrage(new VIPDiscount());
-                    break;
+                CookingFactory factory;
+                ICourse course = null;
+                switch (item.Code)
+                {
+                    case 1:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateSoupCourse();
+                        break;
+                    case 2:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateMainCourse();
+                        break;
+                    case 3:
+                        factory = new ChineeseFactory();
+                        course = factory.CreateDessertCourse();
+                        break;
+                    case 4:
+                        factory = new ItalianFactory();
+                        course = factory.CreateSoupCourse();
+                        break;
+                    case 5:
+                        factory = new ItalianFactory();
+                        course = factory.CreateMainCourse();
+                        break;
+                    case 6:
+                        factory = new ItalianFactory();
+                        course = factory.CreateDessertCourse();
+                        break;
+                }
+
+                Thread thread = new Thread(() => course.CookAsync(item));
+                thread.Start();
             }
-
-            switch (order.Locale)
-            {
-                case "USA":
-                    accounting = new AmericanTax();
-                    break;
-                case "EU":
-                    accounting = new EuropeanTax();
-                    break;
-                default:
-                    accounting = null;
-                    break;
-            }
-
-
-
-            ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice)
-                - discount.DetermineDiscountAmount() * order.InitialPrice;
-
-            discount.Balance += ticket.FinalPrice;
-
-            discount.State.NextState(discount);
-            unit.Save();
         }
 
         public void SetLocale()
