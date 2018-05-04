@@ -59,8 +59,6 @@ namespace Server.BL
 
     abstract class Accounting
     {
-        TaxReference taxReference;
-
         public abstract double CalculateTax(double initialPrice);
         public abstract double CalculateSanction(string menuType);
         public double GetAdditionalPrice(string menuType, double initialPrice)

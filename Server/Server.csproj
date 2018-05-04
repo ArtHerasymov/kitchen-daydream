@@ -242,14 +242,9 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Diagrams\BackupBridge.cd" />
+    <Content Include="ClassDiagram1.cd" />
+    <Content Include="Diagrams\BackupStrategy.cd" />
     <Content Include="Diagrams\CookingFactory.cd" />
-    <Content Include="Diagrams\DiscountProxy.cd" />
-    <Content Include="Diagrams\SalesTaxStrategy.cd" />
-    <Content Include="Diagrams\State.cd" />
-    <Content Include="Diagrams\TicketBuilder.cd" />
-    <Content Include="Diagrams\EntityFramework.cd" />
-    <Content Include="Diagrams\Global.cd" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using Server.DAL;
 using Server.Models;
 using Server.BL;
+using Newtonsoft.Json;
 
 namespace Server.Controllers
 {
@@ -44,9 +45,9 @@ namespace Server.Controllers
             foreach(Item item in items)
             {
                 if (item == null)
-                    return Json("false", JsonRequestBehavior.AllowGet);
+                    return Json("INTERNAL_ERROR", JsonRequestBehavior.AllowGet);
                 if(item.Status != "READY")
-                    return Json("false", JsonRequestBehavior.AllowGet);
+                    return Json("IN__PROGRESS", JsonRequestBehavior.AllowGet);
             }
             order.ChangeStatus();
             unitOfWork.OrderRepository.Update(order);
@@ -100,7 +101,9 @@ namespace Server.Controllers
                     unitOfWork.ItemRepository.Insert(i);
                 unitOfWork.Save();
             }
-            return Json(order.OrderID , JsonRequestBehavior.AllowGet);
+
+
+            return Json(new { ID=order.OrderID, FinalPrice = order.InitialPrice } ,JsonRequestBehavior.AllowGet);
         }
     
         // GET: Orders/Edit/5
@@ -170,5 +173,23 @@ namespace Server.Controllers
             }
             base.Dispose(disposing);
         }
+    }
+
+
+
+    class ServerResponse
+    {
+        int id;
+        string status;
+        double finalPrice;
+
+        public ServerResponse(int id , double finalPrice)
+        {
+            this.id = id;
+            this.finalPrice = finalPrice;
+        }
+
+
+
     }
 }

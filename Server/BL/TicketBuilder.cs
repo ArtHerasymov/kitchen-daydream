@@ -20,8 +20,7 @@ namespace Server.BL
         void CalculateDeadline();
         void DecodeTitles();
         void GenerateTicketId();
-        Task InitiateCookingAsync();
-    
+        void InitiateCookingAsync();
         Ticket GetTicket();
     }
 
@@ -57,7 +56,11 @@ namespace Server.BL
 
         public void CalculateDeadline()
         {
-            ticket.Deadline = DateTime.Now.AddHours(1).ToString();
+            string contents = File.ReadAllText(@"E:\CookingTechnologyAPI.json");
+            dynamic deserializedValue = JsonConvert.DeserializeObject(contents);
+            ticket.Deadline = DateTime.Now.
+                AddHours((double)deserializedValue["Deadlines"]["ChineeseDeadline"])
+                .ToString();
         }
 
         public void CalculateFinalPrice()
@@ -71,7 +74,7 @@ namespace Server.BL
                 - discount.DetermineDiscountAmount() * order.InitialPrice;
 
             discount.Balance += ticket.FinalPrice;
-
+            order.InitialPrice = ticket.FinalPrice;
             discount.State.NextState(discount);
             unit.Save();
         }
@@ -114,7 +117,7 @@ namespace Server.BL
             return this.ticket;
         }
 
-        public async Task InitiateCookingAsync()
+        public void InitiateCookingAsync()
         {
             var reports = new List<Task<string>>();
             foreach (Item item in ticket.Items)
@@ -200,7 +203,12 @@ namespace Server.BL
 
         public void CalculateDeadline()
         {
-            ticket.Deadline = DateTime.Now.AddHours(0.5).ToString();
+
+            string contents = File.ReadAllText(@"E:\CookingTechnologyAPI.json");
+            dynamic deserializedValue = JsonConvert.DeserializeObject(contents);
+            ticket.Deadline = DateTime.Now.
+                AddHours((double)deserializedValue["Deadlines"]["ItalianDeadline"])
+                .ToString();
         }
 
         public void CalculateFinalPrice()
@@ -215,6 +223,7 @@ namespace Server.BL
                 - discount.DetermineDiscountAmount() * order.InitialPrice;
 
             discount.Balance += ticket.FinalPrice;
+            order.InitialPrice = ticket.FinalPrice;
 
             discount.State.NextState(discount);
             unit.Save();
@@ -259,7 +268,7 @@ namespace Server.BL
             return this.ticket;
         }
 
-        public async Task InitiateCookingAsync()
+        public void InitiateCookingAsync()
         {
             var reports = new List<Task<string>>();
             foreach (Item item in ticket.Items)
@@ -345,7 +354,12 @@ namespace Server.BL
 
         public void CalculateDeadline()
         {
-            ticket.Deadline = DateTime.Now.AddHours(1.5).ToString();
+
+            string contents = File.ReadAllText(@"E:\CookingTechnologyAPI.json");
+            dynamic deserializedValue = JsonConvert.DeserializeObject(contents);
+            ticket.Deadline = DateTime.Now.
+                AddHours((double)deserializedValue["Deadlines"]["MixedDeadline"])
+                .ToString();
         }
 
         public void CalculateFinalPrice()
@@ -360,6 +374,7 @@ namespace Server.BL
                 - discount.DetermineDiscountAmount() * order.InitialPrice;
 
             discount.Balance += ticket.FinalPrice;
+            order.InitialPrice = ticket.FinalPrice;
 
             discount.State.NextState(discount);
             unit.Save();
@@ -412,7 +427,6 @@ namespace Server.BL
         public void GenerateTicketId()
         {
             ticket.TicketID = "MIX" + new Random().Next();
-
         }
 
         public Ticket GetTicket()
@@ -420,7 +434,7 @@ namespace Server.BL
             return this.ticket;
         }
 
-        public async Task InitiateCookingAsync()
+        public void InitiateCookingAsync()
         {
             var reports = new List<Task<string>>();
             foreach (Item item in ticket.Items)

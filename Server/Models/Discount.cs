@@ -1,12 +1,14 @@
-﻿ using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using Server.BL;
+using Server.DAL;
 
 namespace Server.Models
 {
-    public class Discount
+    public class Discount : AccessProxy
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int DiscountID { get; set; }
@@ -42,5 +44,15 @@ namespace Server.Models
             return (int)this.State.GetAmount() / 100.0;   
         }
 
+        public override void AccountDiscount(UnitOfWork unitOfWork, int id)
+        {
+            unitOfWork.DiscountRepository.Insert(this);
+            unitOfWork.Save();
+        }
+
+        public override double GetBalance()
+        {
+            return this.Balance;
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace Server.Controllers
             ViewBag.Title = "Home Page";
 
 
-            // Dump data on entry (Using Bridge pattern)
+            // Dump data on entry (Using Strategy pattern)
             AbstractBackupManager backupManager;
             if (CheckForInternetConnection())
                 backupManager = new AbstractBackupManager(new OnlineBackup());

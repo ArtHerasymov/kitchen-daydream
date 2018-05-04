@@ -22,13 +22,13 @@ namespace Server.BL
         {
             this.unitOfWork = unitOfWork;
 
+
             if (unitOfWork.DiscountRepository.GetByID(id) == null)
             {
                 _realObject = new Discount();
                 _realObject.DiscountID = id;
                 _realObject.Upgrage(new RegularDiscount());
-                unitOfWork.DiscountRepository.Insert(_realObject);
-                unitOfWork.Save();
+                _realObject.AccountDiscount(unitOfWork, id);
             }
         }
 
@@ -36,6 +36,5 @@ namespace Server.BL
         {
             return _realObject.Balance;
         }
-
     }
 }
