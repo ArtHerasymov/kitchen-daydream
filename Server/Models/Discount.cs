@@ -44,7 +44,7 @@ namespace Server.Models
             return (int)this.State.GetAmount() / 100.0;   
         }
 
-        public override void AccountDiscount(UnitOfWork unitOfWork, int id)
+        public override void AccountDiscount(UnitOfWork unitOfWork, int ?id)
         {
             unitOfWork.DiscountRepository.Insert(this);
             unitOfWork.Save();

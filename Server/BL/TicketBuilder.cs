@@ -68,12 +68,18 @@ namespace Server.BL
             UnitOfWork unit = new UnitOfWork();
 
             Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
-            discount.TranscribeState();
+            if(discount != null)
+            {
+                discount.TranscribeState();
+                ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice)
+                    - discount.DetermineDiscountAmount() * order.InitialPrice;
 
-            ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type , order.InitialPrice)
-                - discount.DetermineDiscountAmount() * order.InitialPrice;
-
-            discount.Balance += ticket.FinalPrice;
+                discount.Balance += ticket.FinalPrice;
+            } else
+            {
+                ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice);
+            }
+           
             order.InitialPrice = ticket.FinalPrice;
             discount.State.NextState(discount);
             unit.Save();
@@ -217,14 +223,20 @@ namespace Server.BL
             UnitOfWork unit = new UnitOfWork();
 
             Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
-            discount.TranscribeState();
+            if (discount != null)
+            {
+                discount.TranscribeState();
+                ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice)
+                    - discount.DetermineDiscountAmount() * order.InitialPrice;
 
-            ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice)
-                - discount.DetermineDiscountAmount() * order.InitialPrice;
+                discount.Balance += ticket.FinalPrice;
+            }
+            else
+            {
+                ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice);
+            }
 
-            discount.Balance += ticket.FinalPrice;
             order.InitialPrice = ticket.FinalPrice;
-
             discount.State.NextState(discount);
             unit.Save();
         }
@@ -367,16 +379,22 @@ namespace Server.BL
             UnitOfWork unit = new UnitOfWork();
 
             Discount discount = (Discount)unit.DiscountRepository.GetByID(order.DiscountID);
-            discount.TranscribeState();
-       
+            if (discount != null)
+            {
+                discount.TranscribeState();
+                ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice)
+                    - discount.DetermineDiscountAmount() * order.InitialPrice;
 
-            ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice)
-                - discount.DetermineDiscountAmount() * order.InitialPrice;
+                discount.Balance += ticket.FinalPrice;
+                discount.State.NextState(discount);
 
-            discount.Balance += ticket.FinalPrice;
+            }
+            else
+            {
+                ticket.FinalPrice = order.InitialPrice + accounting.GetAdditionalPrice(order.Type, order.InitialPrice);
+            }
+
             order.InitialPrice = ticket.FinalPrice;
-
-            discount.State.NextState(discount);
             unit.Save();
         }
 

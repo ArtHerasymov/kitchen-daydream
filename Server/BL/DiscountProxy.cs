@@ -9,7 +9,7 @@ namespace Server.BL
 {
     public abstract class AccessProxy
     {
-        public abstract void AccountDiscount(UnitOfWork unitOfWork, int id);
+        public abstract void AccountDiscount(UnitOfWork unitOfWork, int? id);
         public abstract double GetBalance();
     }
 
@@ -18,15 +18,17 @@ namespace Server.BL
         private Discount _realObject;
         UnitOfWork unitOfWork;
 
-        public override void AccountDiscount(UnitOfWork unitOfWork, int id)
+        public override void AccountDiscount(UnitOfWork unitOfWork, int? id)
         {
             this.unitOfWork = unitOfWork;
 
+            if (id == 0)
+                return;
 
             if (unitOfWork.DiscountRepository.GetByID(id) == null)
             {
                 _realObject = new Discount();
-                _realObject.DiscountID = id;
+                _realObject.DiscountID = (int)id;
                 _realObject.Upgrage(new RegularDiscount());
                 _realObject.AccountDiscount(unitOfWork, id);
             }

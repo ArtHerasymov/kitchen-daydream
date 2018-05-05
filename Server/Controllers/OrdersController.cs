@@ -67,8 +67,8 @@ namespace Server.Controllers
         [HttpPost]
         public ActionResult Create([Bind(Include = "Waiter, Items, InitialPrice, DiscountID, Locale, Type")] Order order)
         {
-            // Using : Proxy pattern
             order.Status = "IN_PROGRESS";
+            // Using : Proxy pattern
             DiscountProxy proxy = new DiscountProxy();
             proxy.AccountDiscount(unitOfWork, order.DiscountID);
 
@@ -146,12 +146,17 @@ namespace Server.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
+            
+            Order order = unitOfWork.OrderRepository.GetByID(id);
+            order.Status = "CANCELLED";
+
             if (order == null)
             {
                 return HttpNotFound();
             }
-            return View(order);
+
+            unitOfWork.Save();
+            return Json(new {OrderID = id , Status = order.Status},JsonRequestBehavior.AllowGet);
         }
 
         // POST: Orders/Delete/5
@@ -175,21 +180,4 @@ namespace Server.Controllers
         }
     }
 
-
-
-    class ServerResponse
-    {
-        int id;
-        string status;
-        double finalPrice;
-
-        public ServerResponse(int id , double finalPrice)
-        {
-            this.id = id;
-            this.finalPrice = finalPrice;
-        }
-
-
-
-    }
 }
